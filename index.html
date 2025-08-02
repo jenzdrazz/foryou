@@ -1,1 +1,139 @@
-code deleted
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>I Love You Dila</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at center, #ffe6f0, #ffd6e0);
+      font-family: 'Great Vibes', cursive;
+      overflow: hidden;
+    }
+
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      transition: opacity 0.8s ease;
+    }
+
+    .page.active {
+      display: flex;
+      z-index: 10;
+    }
+
+    .page h1 {
+      font-size: 3em;
+      color: #ff4d88;
+      margin-bottom: 1em;
+    }
+
+    .btn {
+      background-color: #ff4d88;
+      color: white;
+      font-size: 1em;
+      border: none;
+      padding: 0.8em 1.5em;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.3s;
+      font-family: sans-serif;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .text {
+      position: absolute;
+      font-size: 0.9em;
+      color: #ff4d88;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0.9;
+      will-change: transform;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HALAMAN 1 -->
+  <div id="page1" class="page active">
+    <h1>Hai Dila... 💌</h1>
+    <p style="font-size: 1.2em; max-width: 500px; padding: 0 1em; color: #b30059;">
+      akuu liat repost an kamuu mau di buatin kayaa ginii kann?. Tekan tombol di bawah ini ya 😚
+    </p>
+    <button class="btn" onclick="goToPage2()">Lihat Kejutan</button>
+  </div>
+
+  <!-- HALAMAN 2 -->
+  <div id="page2" class="page"></div>
+
+  <!-- MUSIK -->
+  <audio id="loveSong" src="gluesong.mp3" loop autoplay hidden></audio>
+
+  <script>
+    function goToPage2() {
+      document.getElementById("page1").classList.remove("active");
+      document.getElementById("page2").classList.add("active");
+
+      const song = document.getElementById("loveSong");
+      song.play(); // Play music
+
+      startLoveAnimation();
+    }
+
+    function startLoveAnimation() {
+      const jumlahTeks = 100; // lebih ringan & smooth
+      const page2 = document.getElementById("page2");
+      const teksList = [];
+
+      for (let i = 0; i < jumlahTeks; i++) {
+        const span = document.createElement("div");
+        span.className = "text";
+        span.textContent = "I Love You Dila 💖";
+        page2.appendChild(span);
+        teksList.push({
+          el: span,
+          offset: (i / jumlahTeks) * Math.PI * 2,
+          speedOffset: Math.random() * 0.4 + 0.6
+        });
+      }
+
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      function heartPath(t) {
+        const x = 16 * Math.pow(Math.sin(t), 3);
+        const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+        return [x * 12, -y * 12]; // skala love
+      }
+
+      let baseAngle = 0;
+
+      function animate() {
+        baseAngle += 0.006;
+        teksList.forEach((obj) => {
+          const angle = baseAngle * obj.speedOffset + obj.offset;
+          const [x, y] = heartPath(angle);
+          obj.el.style.left = `${centerX + x}px`;
+          obj.el.style.top = `${centerY + y}px`;
+        });
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+  </script>
+
+</body>
+</html>
