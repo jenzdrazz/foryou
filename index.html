@@ -4,19 +4,20 @@
   <meta charset="UTF-8">
   <title>Editor Layout Akun</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
 
-  <h1 class="text-2xl font-bold mb-4">Editor Spek Akun</h1>
+  <h1 class="text-2xl font-bold mb-6">Editor Spek Akun</h1>
 
   <!-- Tombol Upload -->
-  <label class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer mb-4">
+  <label for="upload" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow cursor-pointer hover:bg-blue-700 mb-4">
     📂 Pilih Gambar
-    <input id="upload" type="file" accept="image/*" multiple class="hidden">
   </label>
+  <input id="upload" type="file" accept="image/*" multiple class="hidden">
 
   <!-- Pilihan Layout -->
-  <select id="layout" class="mb-4 border px-2 py-1 rounded">
+  <select id="layout" class="mb-4 border px-3 py-2 rounded-lg shadow">
     <option value="1">1 Kolom</option>
     <option value="2">2 Kolom</option>
     <option value="3">3 Kolom</option>
@@ -34,6 +35,11 @@
     <option value="15">15 Kolom</option>
   </select>
 
+  <!-- Tombol Download -->
+  <button id="download" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 mb-6">
+    ⬇️ Download Layout
+  </button>
+
   <!-- Area Gambar -->
   <div id="preview" class="grid gap-1 w-full max-w-6xl"></div>
 
@@ -41,6 +47,7 @@
     const upload = document.getElementById('upload');
     const layout = document.getElementById('layout');
     const preview = document.getElementById('preview');
+    const downloadBtn = document.getElementById('download');
 
     function render(files) {
       preview.innerHTML = '';
@@ -53,7 +60,7 @@
           div.className = "bg-yellow-300 flex items-center justify-center";
           const img = document.createElement('img');
           img.src = e.target.result;
-          img.className = "w-full h-full object-cover"; // tanpa rounded, persegi tajam
+          img.className = "w-full h-full object-cover"; // kotak tajam
           div.appendChild(img);
           preview.appendChild(div);
         };
@@ -64,6 +71,16 @@
     upload.addEventListener('change', e => render(e.target.files));
     layout.addEventListener('change', () => {
       if (upload.files.length) render(upload.files);
+    });
+
+    // Download grid sebagai PNG
+    downloadBtn.addEventListener('click', () => {
+      html2canvas(preview, { backgroundColor: null }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = "layout-akun.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
     });
   </script>
 </body>
