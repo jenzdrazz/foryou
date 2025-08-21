@@ -1,139 +1,120 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>I Love You Dila</title>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      background: radial-gradient(circle at center, #ffe6f0, #ffd6e0);
-      font-family: 'Great Vibes', cursive;
-      overflow: hidden;
-    }
-
-    .page {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-align: center;
-      transition: opacity 0.8s ease;
-    }
-
-    .page.active {
-      display: flex;
-      z-index: 10;
-    }
-
-    .page h1 {
-      font-size: 3em;
-      color: #ff4d88;
-      margin-bottom: 1em;
-    }
-
-    .btn {
-      background-color: #ff4d88;
-      color: white;
-      font-size: 1em;
-      border: none;
-      padding: 0.8em 1.5em;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: transform 0.3s;
-      font-family: sans-serif;
-    }
-
-    .btn:hover {
-      transform: scale(1.05);
-    }
-
-    .text {
-      position: absolute;
-      font-size: 0.9em;
-      color: #ff4d88;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0.9;
-      will-change: transform;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Auto Layout Akun</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
 
-  <!-- HALAMAN 1 -->
-  <div id="page1" class="page active">
-    <h1>Hai Dila... 💌</h1>
-    <p style="font-size: 1.2em; max-width: 500px; padding: 0 1em; color: #b30059;">
-      akuu liat repost an kamuu mau di buatin kayaa ginii kann?. Tekan tombol di bawah ini ya 😚
-    </p>
-    <button class="btn" onclick="goToPage2()">Lihat Kejutan</button>
+  <h1 class="text-2xl font-bold mb-4">✨ Tata Otomatis Akun ✨</h1>
+
+  <!-- Upload -->
+  <div class="flex gap-2 mb-4">
+    <input type="file" id="upload" multiple accept="image/*" 
+           class="border p-2 rounded bg-white shadow" />
+    <button id="loadBtn" class="px-3 py-2 bg-green-600 text-white rounded shadow">
+      Load Gambar
+    </button>
   </div>
 
-  <!-- HALAMAN 2 -->
-  <div id="page2" class="page"></div>
+  <!-- Pilih template -->
+  <select id="layout" class="mb-4 border p-2 rounded bg-white shadow">
+    <option value="grid-cols-1">📒 1 Kolom</option>
+    <option value="grid-cols-2">📒 2 Kolom</option>
+    <option value="grid-cols-3">📒 3 Kolom</option>
+    <option value="grid-cols-4">📒 4 Kolom</option>
+    <option value="grid-cols-5">📒 5 Kolom</option>
+    <option value="grid-cols-6">📒 6 Kolom</option>
+    <option value="grid-cols-7">📒 7 Kolom</option>
+    <option value="grid-cols-8">📒 8 Kolom</option>
+    <option value="grid-cols-9">📒 9 Kolom</option>
+    <option value="grid-cols-10">📒 10 Kolom</option>
+    <option value="grid-cols-11">📒 11 Kolom</option>
+    <option value="grid-cols-12">📒 12 Kolom</option>
+    <option value="grid-cols-2 md:grid-cols-4">📒 Responsive 2 → 4 Kolom</option>
+    <option value="grid-cols-3 md:grid-cols-6">📒 Responsive 3 → 6 Kolom</option>
+    <option value="grid-cols-4 md:grid-cols-8">📒 Responsive 4 → 8 Kolom</option>
+  </select>
 
-  <!-- MUSIK -->
-  <audio id="loveSong" src="Glue Song - beabadoobee Lyrics.mp3" loop autoplay hidden></audio>
+  <!-- Container hasil -->
+  <div id="gallery" class="grid gap-4 w-full max-w-6xl"></div>
 
+  <!-- Tombol export -->
+  <button id="saveBtn" class="mt-6 px-4 py-2 bg-blue-600 text-white rounded shadow">
+    Simpan Jadi Gambar
+  </button>
+
+  <!-- html2canvas buat export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    function goToPage2() {
-      document.getElementById("page1").classList.remove("active");
-      document.getElementById("page2").classList.add("active");
+    const upload = document.getElementById("upload");
+    const loadBtn = document.getElementById("loadBtn");
+    const gallery = document.getElementById("gallery");
+    const layout = document.getElementById("layout");
+    const saveBtn = document.getElementById("saveBtn");
 
-      const song = document.getElementById("loveSong");
-      song.play(); // Play music
-
-      startLoveAnimation();
+    // fungsi isi dummy
+    function loadDummy() {
+      gallery.innerHTML = "";
+      gallery.className = `grid gap-4 w-full max-w-6xl ${layout.value}`;
+      for (let i = 1; i <= 6; i++) {
+        const img = document.createElement("img");
+        img.src = `https://picsum.photos/300/200?random=${i}`;
+        img.className = "w-full rounded-xl shadow-md object-cover";
+        gallery.appendChild(img);
+      }
     }
 
-    function startLoveAnimation() {
-      const jumlahTeks = 100; // lebih ringan & smooth
-      const page2 = document.getElementById("page2");
-      const teksList = [];
+    // pertama kali buka → isi dummy
+    loadDummy();
 
-      for (let i = 0; i < jumlahTeks; i++) {
-        const span = document.createElement("div");
-        span.className = "text";
-        span.textContent = "I Love You Dila 💖";
-        page2.appendChild(span);
-        teksList.push({
-          el: span,
-          offset: (i / jumlahTeks) * Math.PI * 2,
-          speedOffset: Math.random() * 0.4 + 0.6
-        });
+    // ubah layout
+    layout.addEventListener("change", () => {
+      if (gallery.children.length === 0) {
+        loadDummy();
       }
+    });
 
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-
-      function heartPath(t) {
-        const x = 16 * Math.pow(Math.sin(t), 3);
-        const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-        return [x * 12, -y * 12]; // skala love
+    // tombol load gambar upload
+    loadBtn.addEventListener("click", () => {
+      if (upload.files.length === 0) {
+        alert("⚠️ Belum pilih file, pake dummy dulu ya.");
+        loadDummy();
+        return;
       }
+      gallery.innerHTML = "";
+      gallery.className = `grid gap-4 w-full max-w-6xl ${layout.value}`;
+      Array.from(upload.files).forEach(file => {
+        try {
+          const reader = new FileReader();
+          reader.onload = e => {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.className = "w-full rounded-xl shadow-md object-cover";
+            gallery.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        } catch (err) {
+          console.error("❌ Gagal baca file:", err);
+          alert("Gagal baca file di HP lo.");
+        }
+      });
+    });
 
-      let baseAngle = 0;
-
-      function animate() {
-        baseAngle += 0.006;
-        teksList.forEach((obj) => {
-          const angle = baseAngle * obj.speedOffset + obj.offset;
-          const [x, y] = heartPath(angle);
-          obj.el.style.left = `${centerX + x}px`;
-          obj.el.style.top = `${centerY + y}px`;
-        });
-        requestAnimationFrame(animate);
+    // simpan jadi gambar
+    saveBtn.addEventListener("click", () => {
+      if (gallery.innerHTML.trim() === "") {
+        alert("⚠️ Belum ada gambar untuk disimpan!");
+        return;
       }
-
-      animate();
-    }
+      html2canvas(gallery).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "layout-akun.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
   </script>
-
 </body>
 </html>
