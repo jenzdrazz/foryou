@@ -4,21 +4,18 @@
   <meta charset="UTF-8">
   <title>Editor Layout Akun</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+<body class="min-h-screen flex flex-col items-center justify-center" style="background-color: #FFD700;">
+  <h1 class="text-2xl font-bold mb-4">Editor Layout Akun</h1>
 
-  <h1 class="text-2xl font-bold mb-6">Editor Spek Akun</h1>
-
-  <!-- Tombol Upload -->
-  <label for="upload" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow cursor-pointer hover:bg-blue-700 mb-4">
+  <!-- Upload -->
+  <label class="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer mb-3">
     📂 Pilih Gambar
+    <input type="file" id="upload" multiple accept="image/*" class="hidden">
   </label>
-  <input id="upload" type="file" accept="image/*" multiple class="hidden">
 
-  <!-- Pilihan Layout -->
-  <select id="layout" class="mb-4 border px-3 py-2 rounded-lg shadow">
-    <option value="1">1 Kolom</option>
+  <!-- Pilih layout -->
+  <select id="layout" class="mb-4 p-2 border rounded">
     <option value="2">2 Kolom</option>
     <option value="3">3 Kolom</option>
     <option value="4">4 Kolom</option>
@@ -35,49 +32,46 @@
     <option value="15">15 Kolom</option>
   </select>
 
-  <!-- Tombol Download -->
-  <button id="download" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700 mb-6">
-    ⬇️ Download Layout
-  </button>
+  <!-- Preview -->
+  <div id="preview" class="grid gap-1 w-full max-w-5xl"></div>
 
-  <!-- Area Gambar -->
-  <div id="preview" class="grid gap-1 w-full max-w-6xl"></div>
+  <!-- Download -->
+  <button id="download" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">💾 Simpan Jadi Gambar</button>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    const upload = document.getElementById('upload');
-    const layout = document.getElementById('layout');
-    const preview = document.getElementById('preview');
-    const downloadBtn = document.getElementById('download');
+    const upload = document.getElementById("upload");
+    const layout = document.getElementById("layout");
+    const preview = document.getElementById("preview");
+    const downloadBtn = document.getElementById("download");
 
-    function render(files) {
-      preview.innerHTML = '';
+    let files = [];
+
+    function render() {
       const cols = layout.value;
-      preview.className = `grid gap-1 w-full max-w-6xl grid-cols-${cols}`;
-      [...files].forEach(file => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const div = document.createElement('div');
-          div.className = "bg-yellow-300 flex items-center justify-center";
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.className = "w-full h-full object-cover"; // kotak tajam
-          div.appendChild(img);
-          preview.appendChild(div);
-        };
-        reader.readAsDataURL(file);
+      preview.className = `grid gap-1 w-full max-w-5xl grid-cols-${cols}`;
+      preview.style.backgroundColor = "#FFD700"; // kuning emas
+      preview.innerHTML = "";
+
+      files.forEach(file => {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        img.className = "w-full h-auto object-cover"; // tanpa rounded
+        preview.appendChild(img);
       });
     }
 
-    upload.addEventListener('change', e => render(e.target.files));
-    layout.addEventListener('change', () => {
-      if (upload.files.length) render(upload.files);
+    upload.addEventListener("change", e => {
+      files = Array.from(e.target.files);
+      render();
     });
 
-    // Download grid sebagai PNG
-    downloadBtn.addEventListener('click', () => {
-      html2canvas(preview, { backgroundColor: null }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = "layout-akun.png";
+    layout.addEventListener("change", render);
+
+    downloadBtn.addEventListener("click", () => {
+      html2canvas(preview, { backgroundColor: "#FFD700" }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "layout.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
       });
