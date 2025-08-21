@@ -15,22 +15,32 @@
   </label>
 
   <!-- Pilih layout -->
-  <select id="layout" class="mb-4 p-2 border rounded">
-    <option value="2">2 Kolom</option>
-    <option value="3">3 Kolom</option>
-    <option value="4">4 Kolom</option>
-    <option value="5">5 Kolom</option>
-    <option value="6">6 Kolom</option>
-    <option value="7">7 Kolom</option>
-    <option value="8">8 Kolom</option>
-    <option value="9">9 Kolom</option>
-    <option value="10">10 Kolom</option>
-    <option value="11">11 Kolom</option>
-    <option value="12">12 Kolom</option>
-    <option value="13">13 Kolom</option>
-    <option value="14">14 Kolom</option>
-    <option value="15">15 Kolom</option>
-  </select>
+  <div class="flex gap-2 mb-4">
+    <select id="layout" class="p-2 border rounded">
+      <option value="2">2 Kolom</option>
+      <option value="3">3 Kolom</option>
+      <option value="4">4 Kolom</option>
+      <option value="5">5 Kolom</option>
+      <option value="6">6 Kolom</option>
+      <option value="7">7 Kolom</option>
+      <option value="8">8 Kolom</option>
+      <option value="9">9 Kolom</option>
+      <option value="10">10 Kolom</option>
+      <option value="11">11 Kolom</option>
+      <option value="12">12 Kolom</option>
+      <option value="13">13 Kolom</option>
+      <option value="14">14 Kolom</option>
+      <option value="15">15 Kolom</option>
+    </select>
+
+    <!-- Pilih kualitas -->
+    <select id="quality" class="p-2 border rounded">
+      <option value="1">Normal (1x)</option>
+      <option value="2">Tajam (2x)</option>
+      <option value="3" selected>Super Tajam (3x)</option>
+      <option value="5">Ultra HD (5x)</option>
+    </select>
+  </div>
 
   <!-- Preview -->
   <div id="preview" class="grid gap-1 w-full max-w-5xl"></div>
@@ -44,6 +54,7 @@
     const layout = document.getElementById("layout");
     const preview = document.getElementById("preview");
     const downloadBtn = document.getElementById("download");
+    const quality = document.getElementById("quality");
 
     let files = [];
 
@@ -56,8 +67,8 @@
       files.forEach(file => {
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
-        img.className = "w-full h-auto object-cover"; // tajam, no rounded
-        img.loading = "lazy"; // biar hemat
+        img.className = "w-full h-auto object-cover"; // tajam, kotak biasa
+        img.loading = "lazy";
         preview.appendChild(img);
       });
     }
@@ -70,13 +81,14 @@
     layout.addEventListener("change", render);
 
     downloadBtn.addEventListener("click", () => {
+      const scale = parseInt(quality.value); // ambil pilihan kualitas
       html2canvas(preview, { 
         backgroundColor: "#FFD700", 
-        scale: 3 // <<— ini bikin hasil 3x lebih tajem (HD)
+        scale: scale // sesuai pilihan user
       }).then(canvas => {
         const link = document.createElement("a");
-        link.download = "layout_hd.png";
-        link.href = canvas.toDataURL("image/png", 1.0); // kualitas full
+        link.download = `layout_hd_${scale}x.png`;
+        link.href = canvas.toDataURL("image/png", 1.0);
         link.click();
       });
     });
