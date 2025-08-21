@@ -2,118 +2,68 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Auto Layout Akun</title>
+  <title>Editor Layout Akun</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
 
-  <h1 class="text-2xl font-bold mb-4">✨ Tata Otomatis Akun ✨</h1>
+  <h1 class="text-2xl font-bold mb-4">Editor Spek Akun</h1>
 
-  <!-- Upload -->
-  <div class="flex gap-2 mb-4">
-    <input type="file" id="upload" multiple accept="image/*" 
-           class="border p-2 rounded bg-white shadow" />
-    <button id="loadBtn" class="px-3 py-2 bg-green-600 text-white rounded shadow">
-      Load Gambar
-    </button>
-  </div>
+  <!-- Tombol Upload -->
+  <label class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer mb-4">
+    📂 Pilih Gambar
+    <input id="upload" type="file" accept="image/*" multiple class="hidden">
+  </label>
 
-  <!-- Pilih template -->
-  <select id="layout" class="mb-4 border p-2 rounded bg-white shadow">
-    <option value="grid-cols-1">📒 1 Kolom</option>
-    <option value="grid-cols-2">📒 2 Kolom</option>
-    <option value="grid-cols-3">📒 3 Kolom</option>
-    <option value="grid-cols-4">📒 4 Kolom</option>
-    <option value="grid-cols-5">📒 5 Kolom</option>
-    <option value="grid-cols-6">📒 6 Kolom</option>
-    <option value="grid-cols-7">📒 7 Kolom</option>
-    <option value="grid-cols-8">📒 8 Kolom</option>
-    <option value="grid-cols-9">📒 9 Kolom</option>
-    <option value="grid-cols-10">📒 10 Kolom</option>
-    <option value="grid-cols-11">📒 11 Kolom</option>
-    <option value="grid-cols-12">📒 12 Kolom</option>
-    <option value="grid-cols-2 md:grid-cols-4">📒 Responsive 2 → 4 Kolom</option>
-    <option value="grid-cols-3 md:grid-cols-6">📒 Responsive 3 → 6 Kolom</option>
-    <option value="grid-cols-4 md:grid-cols-8">📒 Responsive 4 → 8 Kolom</option>
+  <!-- Pilihan Layout -->
+  <select id="layout" class="mb-4 border px-2 py-1 rounded">
+    <option value="1">1 Kolom</option>
+    <option value="2">2 Kolom</option>
+    <option value="3">3 Kolom</option>
+    <option value="4">4 Kolom</option>
+    <option value="5">5 Kolom</option>
+    <option value="6">6 Kolom</option>
+    <option value="7">7 Kolom</option>
+    <option value="8">8 Kolom</option>
+    <option value="9">9 Kolom</option>
+    <option value="10">10 Kolom</option>
+    <option value="11">11 Kolom</option>
+    <option value="12">12 Kolom</option>
+    <option value="13">13 Kolom</option>
+    <option value="14">14 Kolom</option>
+    <option value="15">15 Kolom</option>
   </select>
 
-  <!-- Container hasil -->
-  <div id="gallery" class="grid gap-4 w-full max-w-6xl"></div>
+  <!-- Area Gambar -->
+  <div id="preview" class="grid gap-1 w-full max-w-6xl"></div>
 
-  <!-- Tombol export -->
-  <button id="saveBtn" class="mt-6 px-4 py-2 bg-blue-600 text-white rounded shadow">
-    Simpan Jadi Gambar
-  </button>
-
-  <!-- html2canvas buat export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    const upload = document.getElementById("upload");
-    const loadBtn = document.getElementById("loadBtn");
-    const gallery = document.getElementById("gallery");
-    const layout = document.getElementById("layout");
-    const saveBtn = document.getElementById("saveBtn");
+    const upload = document.getElementById('upload');
+    const layout = document.getElementById('layout');
+    const preview = document.getElementById('preview');
 
-    // fungsi isi dummy
-    function loadDummy() {
-      gallery.innerHTML = "";
-      gallery.className = `grid gap-4 w-full max-w-6xl ${layout.value}`;
-      for (let i = 1; i <= 6; i++) {
-        const img = document.createElement("img");
-        img.src = `https://picsum.photos/300/200?random=${i}`;
-        img.className = "w-full rounded-xl shadow-md object-cover";
-        gallery.appendChild(img);
-      }
+    function render(files) {
+      preview.innerHTML = '';
+      const cols = layout.value;
+      preview.className = `grid gap-1 w-full max-w-6xl grid-cols-${cols}`;
+      [...files].forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const div = document.createElement('div');
+          div.className = "bg-yellow-300 flex items-center justify-center";
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = "w-full h-full object-cover"; // tanpa rounded, persegi tajam
+          div.appendChild(img);
+          preview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
-    // pertama kali buka → isi dummy
-    loadDummy();
-
-    // ubah layout
-    layout.addEventListener("change", () => {
-      if (gallery.children.length === 0) {
-        loadDummy();
-      }
-    });
-
-    // tombol load gambar upload
-    loadBtn.addEventListener("click", () => {
-      if (upload.files.length === 0) {
-        alert("⚠️ Belum pilih file, pake dummy dulu ya.");
-        loadDummy();
-        return;
-      }
-      gallery.innerHTML = "";
-      gallery.className = `grid gap-4 w-full max-w-6xl ${layout.value}`;
-      Array.from(upload.files).forEach(file => {
-        try {
-          const reader = new FileReader();
-          reader.onload = e => {
-            const img = document.createElement("img");
-            img.src = e.target.result;
-            img.className = "w-full rounded-xl shadow-md object-cover";
-            gallery.appendChild(img);
-          };
-          reader.readAsDataURL(file);
-        } catch (err) {
-          console.error("❌ Gagal baca file:", err);
-          alert("Gagal baca file di HP lo.");
-        }
-      });
-    });
-
-    // simpan jadi gambar
-    saveBtn.addEventListener("click", () => {
-      if (gallery.innerHTML.trim() === "") {
-        alert("⚠️ Belum ada gambar untuk disimpan!");
-        return;
-      }
-      html2canvas(gallery).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "layout-akun.png";
-        link.href = canvas.toDataURL();
-        link.click();
-      });
+    upload.addEventListener('change', e => render(e.target.files));
+    layout.addEventListener('change', () => {
+      if (upload.files.length) render(upload.files);
     });
   </script>
 </body>
