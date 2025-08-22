@@ -5,113 +5,100 @@
   <title>Editor Layout Akun (HD)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background: linear-gradient(135deg, #FFD700, #FFB700, #FF8C00);
-      background-size: 300% 300%;
-      animation: gradientMove 8s ease infinite;
-    }
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .glass {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-    }
+    canvas { display:none; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center text-white p-6">
-  <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg animate-bounce">✨ Editor Layout Akun (HD)</h1>
-
-  <!-- Card utama -->
-  <div class="glass rounded-2xl p-6 w-full max-w-5xl shadow-2xl flex flex-col items-center">
+<body class="min-h-screen flex flex-col items-center bg-yellow-400" style="background-color:#FFD700;">
+  <div class="w-full max-w-7xl px-2 flex flex-col items-center">
+    <h1 class="text-2xl font-bold mt-4 mb-4 text-gray-900">Editor Layout Akun (HD)</h1>
 
     <!-- Upload -->
-    <label class="bg-blue-600 hover:bg-blue-700 transition-all text-white px-6 py-3 rounded-xl cursor-pointer mb-4 font-semibold shadow-lg">
+    <label class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer mb-3">
       📂 Pilih Gambar
       <input type="file" id="upload" multiple accept="image/*" class="hidden">
     </label>
 
-    <!-- Pilih layout & kualitas -->
-    <div class="flex gap-4 mb-6 flex-wrap justify-center">
-      <select id="layout" class="p-3 rounded-xl bg-white/20 text-white shadow-md border border-white/30 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+    <!-- Control -->
+    <div class="flex flex-wrap gap-2 mb-4 justify-center">
+      <select id="layout" class="p-2 border rounded">
         <option value="2">2 Kolom</option>
         <option value="3">3 Kolom</option>
-        <option value="4">4 Kolom</option>
+        <option value="4" selected>4 Kolom</option>
         <option value="5">5 Kolom</option>
         <option value="6">6 Kolom</option>
         <option value="7">7 Kolom</option>
         <option value="8">8 Kolom</option>
-        <option value="9">9 Kolom</option>
-        <option value="10">10 Kolom</option>
-        <option value="11">11 Kolom</option>
-        <option value="12">12 Kolom</option>
-        <option value="13">13 Kolom</option>
-        <option value="14">14 Kolom</option>
-        <option value="15">15 Kolom</option>
       </select>
-
-      <select id="quality" class="p-3 rounded-xl bg-white/20 text-white shadow-md border border-white/30 focus:outline-none focus:ring-2 focus:ring-yellow-300">
-        <option value="1">Normal (1x)</option>
-        <option value="2">Tajam (2x)</option>
-        <option value="3" selected>Super Tajam (3x)</option>
-        <option value="5">Ultra HD (5x)</option>
-      </select>
+      <button id="download" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+        ⬇️ Download HD
+      </button>
     </div>
 
-    <!-- Preview -->
-    <div id="preview" class="grid gap-2 w-full"></div>
+    <!-- Preview Grid -->
+    <div id="preview" class="grid gap-[2px] w-full"></div>
 
-    <!-- Download -->
-    <button id="download" class="mt-6 bg-green-600 hover:bg-green-700 transition-all text-white px-6 py-3 rounded-xl font-semibold shadow-lg">
-      💾 Simpan Jadi Gambar (HD)
-    </button>
+    <canvas id="canvas"></canvas>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    const upload = document.getElementById("upload");
-    const layout = document.getElementById("layout");
-    const preview = document.getElementById("preview");
-    const downloadBtn = document.getElementById("download");
-    const quality = document.getElementById("quality");
+    const upload = document.getElementById('upload');
+    const preview = document.getElementById('preview');
+    const layout = document.getElementById('layout');
+    const downloadBtn = document.getElementById('download');
+    const canvas = document.getElementById('canvas');
 
-    let files = [];
+    let images = [];
 
-    function render() {
-      const cols = layout.value;
-      preview.className = `grid gap-2 w-full grid-cols-${cols}`;
-      preview.innerHTML = "";
+    upload.addEventListener('change', e => {
+      images = Array.from(e.target.files);
+      render();
+    });
 
-      files.forEach(file => {
-        const img = document.createElement("img");
+    layout.addEventListener('change', render);
+
+    function render(){
+      preview.innerHTML = '';
+      if(images.length === 0) return;
+
+      const cols = parseInt(layout.value);
+      preview.className = `grid gap-[2px] w-full grid-cols-${cols}`;
+
+      images.forEach(file=>{
+        const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
-        img.className = "w-full h-full object-cover rounded-lg shadow-md transition-transform duration-300 hover:scale-105";
-        img.loading = "lazy";
+        img.className = "w-full h-auto object-cover";
         preview.appendChild(img);
       });
     }
 
-    upload.addEventListener("change", e => {
-      files = Array.from(e.target.files);
-      render();
-    });
+    downloadBtn.addEventListener('click', async ()=>{
+      if(images.length===0) return;
+      const cols = parseInt(layout.value);
+      const size = 400; // tiap kotak 400px (HD)
+      const rows = Math.ceil(images.length / cols);
 
-    layout.addEventListener("change", render);
+      canvas.width = cols * (size + 2); 
+      canvas.height = rows * (size + 2);
+      const ctx = canvas.getContext('2d');
 
-    downloadBtn.addEventListener("click", () => {
-      const scale = parseInt(quality.value);
-      html2canvas(preview, { 
-        backgroundColor: "#FFD700", 
-        scale: scale 
-      }).then(canvas => {
-        const link = document.createElement("a");
-        link.download = `layout_hd_${scale}x.png`;
-        link.href = canvas.toDataURL("image/png", 1.0);
-        link.click();
-      });
+      ctx.fillStyle = "#FFD700"; // kuning emas background
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      for(let i=0;i<images.length;i++){
+        const imgFile = images[i];
+        const img = new Image();
+        img.src = URL.createObjectURL(imgFile);
+        await img.decode();
+
+        const x = (i % cols) * (size + 2);
+        const y = Math.floor(i / cols) * (size + 2);
+        ctx.drawImage(img, x, y, size, size);
+      }
+
+      const link = document.createElement('a');
+      link.download = 'layout-hd.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     });
   </script>
 </body>
