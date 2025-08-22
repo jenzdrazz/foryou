@@ -2,51 +2,73 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Editor Layout Akun</title>
+  <title>Editor Layout Akun (HD)</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #FFD700, #FFB700, #FF8C00);
+      background-size: 300% 300%;
+      animation: gradientMove 8s ease infinite;
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center" style="background-color: #FFD700;">
-  <h1 class="text-2xl font-bold mb-4">Editor Layout Akun (HD)</h1>
+<body class="min-h-screen flex flex-col items-center justify-center text-white p-6">
+  <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg animate-bounce">✨ Editor Layout Akun (HD)</h1>
 
-  <!-- Upload -->
-  <label class="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer mb-3">
-    📂 Pilih Gambar
-    <input type="file" id="upload" multiple accept="image/*" class="hidden">
-  </label>
+  <!-- Card utama -->
+  <div class="glass rounded-2xl p-6 w-full max-w-5xl shadow-2xl flex flex-col items-center">
 
-  <!-- Pilih layout -->
-  <div class="flex gap-2 mb-4">
-    <select id="layout" class="p-2 border rounded">
-      <option value="2">2 Kolom</option>
-      <option value="3">3 Kolom</option>
-      <option value="4">4 Kolom</option>
-      <option value="5">5 Kolom</option>
-      <option value="6">6 Kolom</option>
-      <option value="7">7 Kolom</option>
-      <option value="8">8 Kolom</option>
-      <option value="9">9 Kolom</option>
-      <option value="10">10 Kolom</option>
-      <option value="11">11 Kolom</option>
-      <option value="12">12 Kolom</option>
-      <option value="13">13 Kolom</option>
-      <option value="14">14 Kolom</option>
-      <option value="15">15 Kolom</option>
-    </select>
+    <!-- Upload -->
+    <label class="bg-blue-600 hover:bg-blue-700 transition-all text-white px-6 py-3 rounded-xl cursor-pointer mb-4 font-semibold shadow-lg">
+      📂 Pilih Gambar
+      <input type="file" id="upload" multiple accept="image/*" class="hidden">
+    </label>
 
-    <!-- Pilih kualitas -->
-    <select id="quality" class="p-2 border rounded">
-      <option value="1">Normal (1x)</option>
-      <option value="2">Tajam (2x)</option>
-      <option value="3" selected>Super Tajam (3x)</option>
-      <option value="5">Ultra HD (5x)</option>
-    </select>
+    <!-- Pilih layout & kualitas -->
+    <div class="flex gap-4 mb-6 flex-wrap justify-center">
+      <select id="layout" class="p-3 rounded-xl bg-white/20 text-white shadow-md border border-white/30 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+        <option value="2">2 Kolom</option>
+        <option value="3">3 Kolom</option>
+        <option value="4">4 Kolom</option>
+        <option value="5">5 Kolom</option>
+        <option value="6">6 Kolom</option>
+        <option value="7">7 Kolom</option>
+        <option value="8">8 Kolom</option>
+        <option value="9">9 Kolom</option>
+        <option value="10">10 Kolom</option>
+        <option value="11">11 Kolom</option>
+        <option value="12">12 Kolom</option>
+        <option value="13">13 Kolom</option>
+        <option value="14">14 Kolom</option>
+        <option value="15">15 Kolom</option>
+      </select>
+
+      <select id="quality" class="p-3 rounded-xl bg-white/20 text-white shadow-md border border-white/30 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+        <option value="1">Normal (1x)</option>
+        <option value="2">Tajam (2x)</option>
+        <option value="3" selected>Super Tajam (3x)</option>
+        <option value="5">Ultra HD (5x)</option>
+      </select>
+    </div>
+
+    <!-- Preview -->
+    <div id="preview" class="grid gap-2 w-full"></div>
+
+    <!-- Download -->
+    <button id="download" class="mt-6 bg-green-600 hover:bg-green-700 transition-all text-white px-6 py-3 rounded-xl font-semibold shadow-lg">
+      💾 Simpan Jadi Gambar (HD)
+    </button>
   </div>
-
-  <!-- Preview -->
-  <div id="preview" class="grid gap-1 w-full max-w-5xl"></div>
-
-  <!-- Download -->
-  <button id="download" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">💾 Simpan Jadi Gambar (HD)</button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
@@ -60,14 +82,13 @@
 
     function render() {
       const cols = layout.value;
-      preview.className = `grid gap-1 w-full max-w-5xl grid-cols-${cols}`;
-      preview.style.backgroundColor = "#FFD700"; // kuning emas
+      preview.className = `grid gap-2 w-full grid-cols-${cols}`;
       preview.innerHTML = "";
 
       files.forEach(file => {
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
-        img.className = "w-full h-auto object-cover"; // tajam, kotak biasa
+        img.className = "w-full h-full object-cover rounded-lg shadow-md transition-transform duration-300 hover:scale-105";
         img.loading = "lazy";
         preview.appendChild(img);
       });
@@ -81,10 +102,10 @@
     layout.addEventListener("change", render);
 
     downloadBtn.addEventListener("click", () => {
-      const scale = parseInt(quality.value); // ambil pilihan kualitas
+      const scale = parseInt(quality.value);
       html2canvas(preview, { 
         backgroundColor: "#FFD700", 
-        scale: scale // sesuai pilihan user
+        scale: scale 
       }).then(canvas => {
         const link = document.createElement("a");
         link.download = `layout_hd_${scale}x.png`;
