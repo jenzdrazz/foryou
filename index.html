@@ -2,189 +2,96 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Editor Layout Akun Modern</title>
+  <title>Editor Layout Akun</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <style>
-    /* Custom style untuk transisi halus */
-    * {
-      transition: all 0.2s ease-in-out;
-    }
-  </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4 font-sans">
+<body class="min-h-screen flex flex-col items-center justify-center" style="background-color: #FFD700;">
+  <h1 class="text-2xl font-bold mb-4">Editor Layout Akun (HD)</h1>
 
-  <div class="bg-white w-full max-w-6xl rounded-2xl shadow-lg p-6 md:p-8">
-    <div class="mb-6 text-center">
-      <h1 class="text-3xl font-bold text-slate-800">Editor Layout Akun</h1>
-      <p class="text-slate-500 mt-1">Buat grid gambar kustom Anda dalam sekejap.</p>
-    </div>
+  <!-- Upload -->
+  <label class="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer mb-3">
+    📂 Pilih Gambar
+    <input type="file" id="upload" multiple accept="image/*" class="hidden">
+  </label>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-      <div class="bg-slate-50 p-4 rounded-lg border">
-        <h3 class="font-semibold text-slate-700 mb-3">Pengaturan</h3>
-        <div class="flex flex-col sm:flex-row gap-4">
-          <div class="flex-1">
-            <label for="layout" class="block text-sm font-medium text-slate-600 mb-1">Jumlah Kolom</label>
-            <select id="layout" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <option value="2">2 Kolom</option>
-              <option value="3" selected>3 Kolom</option>
-              <option value="4">4 Kolom</option>
-              <option value="5">5 Kolom</option>
-              <option value="6">6 Kolom</option>
-              <option value="7">7 Kolom</option>
-              <option value="8">8 Kolom</option>
-              <option value="9">9 Kolom</option>
-              <option value="10">10 Kolom</option>
-              <option value="11">11 Kolom</option>
-              <option value="12">12 Kolom</option>
-            </select>
-          </div>
-          <div class="flex-1">
-            <label for="quality" class="block text-sm font-medium text-slate-600 mb-1">Kualitas Output</label>
-            <select id="quality" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-              <option value="1">Normal (1x)</option>
-              <option value="2">Tajam (2x)</option>
-              <option value="3" selected>Super Tajam (3x)</option>
-              <option value="5">Ultra HD (5x)</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      
-      <div id="dropzone" class="border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-500 hover:bg-slate-50">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-        </svg>
-        <p class="text-slate-600 font-semibold">Drag & drop gambar di sini</p>
-        <p class="text-sm text-slate-500">atau</p>
-        <label for="upload" class="mt-2 bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded-md cursor-pointer hover:bg-blue-700">
-          📂 Pilih Gambar
-          <input type="file" id="upload" multiple accept="image/*" class="hidden">
-        </label>
-      </div>
-    </div>
+  <!-- Pilih layout -->
+  <div class="flex gap-2 mb-4">
+    <select id="layout" class="p-2 border rounded">
+      <option value="2">2 Kolom</option>
+      <option value="3">3 Kolom</option>
+      <option value="4">4 Kolom</option>
+      <option value="5">5 Kolom</option>
+      <option value="6">6 Kolom</option>
+      <option value="7">7 Kolom</option>
+      <option value="8">8 Kolom</option>
+      <option value="9">9 Kolom</option>
+      <option value="10">10 Kolom</option>
+      <option value="11">11 Kolom</option>
+      <option value="12">12 Kolom</option>
+      <option value="13">13 Kolom</option>
+      <option value="14">14 Kolom</option>
+      <option value="15">15 Kolom</option>
+    </select>
 
-    <div id="preview-container" class="bg-slate-200 p-2 rounded-lg min-h-[200px] flex items-center justify-center">
-      <div id="preview" class="grid gap-1 w-full">
-        <div id="placeholder" class="text-center text-slate-500">
-          <p>Pratinjau grid gambar akan muncul di sini.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-6 text-center">
-      <button id="download" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 mx-auto disabled:bg-slate-400 disabled:cursor-not-allowed" disabled>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-        </svg>
-        Simpan Jadi Gambar (HD)
-      </button>
-    </div>
-
+    <!-- Pilih kualitas -->
+    <select id="quality" class="p-2 border rounded">
+      <option value="1">Normal (1x)</option>
+      <option value="2">Tajam (2x)</option>
+      <option value="3" selected>Super Tajam (3x)</option>
+      <option value="5">Ultra HD (5x)</option>
+    </select>
   </div>
 
+  <!-- Preview -->
+  <div id="preview" class="grid gap-1 w-full max-w-5xl"></div>
+
+  <!-- Download -->
+  <button id="download" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">💾 Simpan Jadi Gambar (HD)</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     const upload = document.getElementById("upload");
     const layout = document.getElementById("layout");
     const preview = document.getElementById("preview");
     const downloadBtn = document.getElementById("download");
     const quality = document.getElementById("quality");
-    const dropzone = document.getElementById("dropzone");
-    const placeholder = document.getElementById("placeholder");
 
     let files = [];
 
-    function handleFiles(newFiles) {
-      files = Array.from(newFiles);
-      if (files.length > 0) {
-        downloadBtn.disabled = false;
-        placeholder.style.display = 'none';
-        render();
-      } else {
-        downloadBtn.disabled = true;
-        placeholder.style.display = 'block';
-        preview.innerHTML = ''; // Kosongkan preview jika tidak ada file
-        preview.appendChild(placeholder);
-      }
-    }
-
     function render() {
       const cols = layout.value;
-      // Tailwind tidak bisa menangani class dinamis seperti `grid-cols-${cols}`
-      // Jadi kita set style nya langsung via JavaScript
-      preview.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-      preview.innerHTML = ""; // Bersihkan preview sebelum render ulang
+      preview.className = `grid gap-1 w-full max-w-5xl grid-cols-${cols}`;
+      preview.style.backgroundColor = "#FFD700"; // kuning emas
+      preview.innerHTML = "";
 
       files.forEach(file => {
-        const imgContainer = document.createElement("div");
-        imgContainer.className = "aspect-square"; // Membuat kontainer rasio 1:1
-
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
-        img.className = "w-full h-full object-cover"; // Gambar mengisi kontainer
+        img.className = "w-full h-auto object-cover"; // tajam, kotak biasa
         img.loading = "lazy";
-        
-        imgContainer.appendChild(img);
-        preview.appendChild(imgContainer);
+        preview.appendChild(img);
       });
     }
 
-    // Event listener untuk input file
-    upload.addEventListener("change", e => handleFiles(e.target.files));
-    layout.addEventListener("change", () => {
-        if(files.length > 0) render();
+    upload.addEventListener("change", e => {
+      files = Array.from(e.target.files);
+      render();
     });
 
-    // Event listeners untuk Drag and Drop
-    dropzone.addEventListener("dragover", e => {
-      e.preventDefault();
-      dropzone.classList.add("border-blue-500", "bg-slate-100");
-    });
-    dropzone.addEventListener("dragleave", e => {
-      e.preventDefault();
-      dropzone.classList.remove("border-blue-500", "bg-slate-100");
-    });
-    dropzone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropzone.classList.remove("border-blue-500", "bg-slate-100");
-      handleFiles(e.dataTransfer.files);
-    });
-    // Juga handle klik di dropzone
-    dropzone.addEventListener("click", () => upload.click());
+    layout.addEventListener("change", render);
 
-    // Event listener untuk tombol download
     downloadBtn.addEventListener("click", () => {
-      if (files.length === 0) return;
-
-      const scale = parseInt(quality.value);
-      const originalBg = preview.style.backgroundColor;
-      
-      // Atur background saat rendering, lalu kembalikan
-      preview.style.backgroundColor = "#E2E8F0"; // slate-200
-
+      const scale = parseInt(quality.value); // ambil pilihan kualitas
       html2canvas(preview, { 
-        backgroundColor: "#E2E8F0", // Background untuk kanvas
-        scale: scale,
-        useCORS: true, // Untuk jaga-jaga jika gambar dari sumber eksternal
-        onclone: (document) => {
-            // Hilangkan placeholder di clone DOM agar tidak ikut ter-render
-            const clonedPlaceholder = document.getElementById("placeholder");
-            if(clonedPlaceholder) clonedPlaceholder.style.display = 'none';
-        }
+        backgroundColor: "#FFD700", 
+        scale: scale // sesuai pilihan user
       }).then(canvas => {
         const link = document.createElement("a");
-        link.download = `layout_akun_hd_${Date.now()}.png`;
+        link.download = `layout_hd_${scale}x.png`;
         link.href = canvas.toDataURL("image/png", 1.0);
         link.click();
-        
-        // Kembalikan background setelah selesai
-        preview.style.backgroundColor = originalBg;
       });
     });
-
-    // Inisialisasi tampilan
-    handleFiles([]);
   </script>
 </body>
 </html>
